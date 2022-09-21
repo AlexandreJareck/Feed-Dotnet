@@ -21,7 +21,6 @@
     <Folder Include="Controllers\" />
     <Folder Include="Configuration\" />
     <Folder Include="Data\" />
-    <Folder Include="DTOs\" />
     <Folder Include="Extensions\" />
   </ItemGroup>
 

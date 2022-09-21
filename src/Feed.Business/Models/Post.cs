@@ -2,7 +2,7 @@
 
 public class Post : Entity
 {
-    public Guid AuthorId { get; set; }
+    public Guid Id { get; set; }
     public Author Author { get; set; }
     public DateTime PublishedAt { get; set; }
 
