@@ -1,4 +1,6 @@
+using Feed.Business.Interfaces.Repositories;
 using Feed.Data.Context;
+using Feed.Data.Repository;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,6 +11,11 @@ builder.Services.AddSwaggerGen();
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<FeedDbContext>(x => x.UseSqlServer(connectionString));
+
+builder.Services.AddScoped<FeedDbContext>();
+builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
+builder.Services.AddScoped<IContentRepository, ContentRepository>();
+builder.Services.AddScoped<IPostRepository, PostRepository>();
 
 var app = builder.Build();
 
