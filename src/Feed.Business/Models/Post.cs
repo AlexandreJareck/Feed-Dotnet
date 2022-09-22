@@ -1,4 +1,6 @@
-﻿namespace Feed.Business.Models;
+﻿using FluentValidation;
+
+namespace Feed.Business.Models;
 
 public class Post : Entity
 {
@@ -7,4 +9,12 @@ public class Post : Entity
     public DateTime PublishedAt { get; set; }
 
     public IEnumerable<Content> Contents { get; set; }
+}
+
+public class PostValidation : AbstractValidator<Post>
+{
+    public PostValidation()
+    {
+
+    }
 }
