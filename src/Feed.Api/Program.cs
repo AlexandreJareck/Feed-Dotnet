@@ -1,4 +1,8 @@
+using Feed.Business.Interfaces;
 using Feed.Business.Interfaces.Repositories;
+using Feed.Business.Interfaces.Services;
+using Feed.Business.Notifications;
+using Feed.Business.Services;
 using Feed.Data.Context;
 using Feed.Data.Repository;
 using Microsoft.EntityFrameworkCore;
@@ -18,6 +22,9 @@ builder.Services.AddScoped<FeedDbContext>();
 builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
 builder.Services.AddScoped<IContentRepository, ContentRepository>();
 builder.Services.AddScoped<IPostRepository, PostRepository>();
+
+builder.Services.AddScoped<INotifier, Notifier>();
+builder.Services.AddScoped<IAuthorService, AuthorService>();
 
 var app = builder.Build();
 

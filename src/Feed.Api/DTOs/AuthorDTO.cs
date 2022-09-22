@@ -16,6 +16,6 @@ namespace Feed.Api.DTOs
         public string Name { get; set; }
         public string Role { get; set; }
 
-        public IEnumerable<PostDTO> Posts { get; set; }
+        public IEnumerable<PostDTO>? Posts { get; set; }
     }
 }
