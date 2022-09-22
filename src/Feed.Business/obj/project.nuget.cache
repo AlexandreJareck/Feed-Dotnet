@@ -1,8 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "P2UXdigXXiMSBdRxOprgk4dQienYIdw+GGlSTIxPlFbkQ182OEP8PxIOwwyVcmDC1D/FB6GVbTfgy4/ZOqBYpw==",
+  "dgSpecHash": "UC7MCQpuJ8InwGyK0hXLQbldxaCsyVOR8i+GPpinCNk/KMRa2Lb2D+o1c+qIySVw01zFgBibXmNYa+STbqT3uQ==",
   "success": true,
   "projectFilePath": "D:\\Workspace\\server\\repos\\Feed-Dotnet\\Feed\\src\\Feed.Business\\Feed.Business.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "C:\\Users\\User\\.nuget\\packages\\fluentvalidation\\11.2.2\\fluentvalidation.11.2.2.nupkg.sha512"
+  ],
   "logs": []
 }
