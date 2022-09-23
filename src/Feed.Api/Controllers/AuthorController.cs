@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Feed.Api.DTOs;
+using Feed.Business.Interfaces;
 using Feed.Business.Interfaces.Repositories;
 using Feed.Business.Interfaces.Services;
 using Feed.Business.Models;
@@ -14,7 +15,10 @@ namespace Feed.Api.Controllers
         private readonly IAuthorService _authorService;
         private readonly IMapper _mapper;
 
-        public AuthorController(IAuthorRepository authorRepository, IAuthorService authorService, IMapper mapper)
+        public AuthorController(IAuthorRepository authorRepository,
+                                IAuthorService authorService,
+                                IMapper mapper,
+                                INotifier notifier) : base(notifier)
         {
             _authorRepository = authorRepository;
             _authorService = authorService;
