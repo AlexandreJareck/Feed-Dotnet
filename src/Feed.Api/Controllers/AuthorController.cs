@@ -32,7 +32,7 @@ namespace Feed.Api.Controllers
             return Ok(author);
         }
 
-        [HttpGet("{id: guid}")]
+        [HttpGet("{id:guid}")]
         public async Task<ActionResult<AuthorDTO>> Get(Guid id)
         {
             var author = await _authorRepository.GetById(id);
@@ -43,20 +43,26 @@ namespace Feed.Api.Controllers
         public async Task<ActionResult<AuthorDTO>> Add(AuthorDTO authorDTO)
         {
             if (!ModelState.IsValid)
-                return BadRequest();
+                return CustomResponse(ModelState);
 
             var author = await _authorService.Add(_mapper.Map<Author>(authorDTO));
 
             authorDTO.Id = author.Id;
 
-            return Ok(authorDTO);
+            return CustomResponse(authorDTO);
         }
 
-        [HttpPut("{id: guid}")]
+        [HttpPut("{id:guid}")]
         public async Task<ActionResult<AuthorDTO>> Update(Guid id, AuthorDTO authorDTO)
         {
+            if(id != authorDTO.Id)
+            {
+                NotifyError("Id Inválido!");
+                return CustomResponse(authorDTO);
+            }
+
             if (!ModelState.IsValid)
-                return BadRequest();
+                return CustomResponse(ModelState);
 
             await _authorService.Update(_mapper.Map<Author>(authorDTO));
 
@@ -73,7 +79,7 @@ namespace Feed.Api.Controllers
 
             await _authorService.Remove(id);
 
-            return Ok();
+            return CustomResponse(authorDTO);
         }
     }
 }

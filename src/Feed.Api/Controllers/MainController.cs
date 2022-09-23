@@ -9,11 +9,36 @@ namespace Feed.Api.Controllers
     public abstract class MainController : ControllerBase
     {
         private readonly INotifier _notifier;
-
         public MainController(INotifier notifier)
         {
             _notifier = notifier;
-        }       
+        }
+
+        protected ActionResult CustomResponse(object? result = null)
+        {
+            if (IsOperationValid())
+            {
+                return Ok(new
+                {
+                    success = true,
+                    data = result
+                });
+            }
+
+            return BadRequest(new
+            {
+                success = false,
+                errors = _notifier.GetNotifications().Select(n => n.Message)
+            });
+        }
+
+        protected ActionResult CustomResponse(ModelStateDictionary modelState)
+        {
+            if (!modelState.IsValid)
+                NotificationErrorModelInvalid(modelState);
+
+            return CustomResponse();
+        }
 
         protected bool IsOperationValid()
         {
