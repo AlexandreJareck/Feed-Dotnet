@@ -14,7 +14,7 @@ namespace Feed.Business.Services
             _authorRepository = authorRepository;
         }
 
-        public async Task<Author> Add(Author author)
+        public async Task<Author?> Add(Author author)
         {
             if (!ExecuteValidation(new AuthorValidation(), author))
                 return null;
@@ -24,14 +24,22 @@ namespace Feed.Business.Services
             return author;
         }
 
-        public Task Remove(Guid id)
+        public async Task Remove(Guid id)
         {
-            throw new NotImplementedException();
+             await _authorRepository.GetById(id);
         }
 
-        public Task Update(Author author)
+        public async Task Update(Author author)
         {
-            throw new NotImplementedException();
+            if (!ExecuteValidation(new AuthorValidation(), author))
+                return;
+
+            await _authorRepository.Update(author);
+        }
+
+        public void Dispose()
+        {
+            _authorRepository?.Dispose();
         }
     }
 }

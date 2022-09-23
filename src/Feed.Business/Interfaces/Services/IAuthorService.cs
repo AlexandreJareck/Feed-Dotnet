@@ -2,7 +2,7 @@
 
 namespace Feed.Business.Interfaces.Services;
 
-public interface IAuthorService
+public interface IAuthorService : IDisposable
 {
     Task<Author> Add(Author author);
     Task Update(Author author);

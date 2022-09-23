@@ -21,15 +21,22 @@ namespace Feed.Api.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<AuthorDTO>>> Get()
+        [HttpGet("get-authors/")]
+        public async Task<ActionResult<IEnumerable<AuthorDTO>>> GetAll()
         {
             var author = await _authorRepository.GetAll();
             return Ok(author);
         }
 
+        [HttpGet("{id: guid}")]
+        public async Task<ActionResult<AuthorDTO>> Get(Guid id)
+        {
+            var author = await _authorRepository.GetById(id);
+            return Ok(author);
+        }
+
         [HttpPost]
-        public async Task<ActionResult<IEnumerable<AuthorDTO>>> Add(AuthorDTO authorDTO)
+        public async Task<ActionResult<AuthorDTO>> Add(AuthorDTO authorDTO)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
@@ -39,6 +46,30 @@ namespace Feed.Api.Controllers
             authorDTO.Id = author.Id;
 
             return Ok(authorDTO);
+        }
+
+        [HttpPut("{id: guid}")]
+        public async Task<ActionResult<AuthorDTO>> Update(Guid id, AuthorDTO authorDTO)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest();
+
+            await _authorService.Update(_mapper.Map<Author>(authorDTO));
+
+            return Ok(authorDTO);
+        }
+
+        [HttpDelete]
+        public async Task<ActionResult<AuthorDTO>> Remove(Guid id)
+        {
+            var authorDTO = _mapper.Map<AuthorDTO>(await _authorRepository.GetById(id));
+
+            if (authorDTO == null)
+                return NotFound();
+
+            await _authorService.Remove(id);
+
+            return Ok();
         }
     }
 }
