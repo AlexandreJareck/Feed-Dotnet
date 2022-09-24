@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Text;
 
 namespace Feed.Api.Controllers
@@ -45,7 +46,7 @@ namespace Feed.Api.Controllers
             if (result.Succeeded)
             {
                 await _signInManager.SignInAsync(user, false);
-                return CustomResponse(GenerateJwt());
+                return CustomResponse(await GenerateJwt(registerUser.Email));
             }
 
             foreach (var error in result.Errors)
@@ -65,7 +66,7 @@ namespace Feed.Api.Controllers
 
             if (result.Succeeded)
             {
-                return CustomResponse(GenerateJwt());
+                return CustomResponse(await GenerateJwt(loginUser.Email));
             }
 
             if (result.IsLockedOut)
@@ -79,21 +80,80 @@ namespace Feed.Api.Controllers
         }
 
 
-        private string GenerateJwt()
+        private async Task<LoginResponseDTO> GenerateJwt(string email)
         {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
+            var user = await _userManager.FindByEmailAsync(email);
+            var claims = await _userManager.GetClaimsAsync(user);
 
-            var token = tokenHandler.CreateToken(new SecurityTokenDescriptor
+            AddClaimsToUser(claims, user);
+
+            var identityClaims = CreateIdentityClaims(claims);
+            var encodedToken = CreateEncodedToken(_appSettings, identityClaims);
+
+            return new LoginResponseDTO
             {
-                Issuer = _appSettings.Issuer,
-                Audience = _appSettings.ValidIn,
-                Expires = DateTime.UtcNow.AddHours(_appSettings.ExpiresIn),
+                AccessToken = encodedToken,
+                ExpiresIn = TimeSpan.FromHours(_appSettings.ExpiresIn).TotalSeconds,
+                UserToken = new UserTokenDTO
+                {
+                    Id = user.Id,
+                    Email = user.Email,
+                    Claims = claims.Select(c => new ClaimDTO
+                    {
+                        Type = c.Type,
+                        Value = c.Value
+                    })
+                }
+            };
+        }
+
+        private void AddClaimsToUser(IList<Claim> claims, IdentityUser user)
+        {
+            claims.Add(new Claim(JwtRegisteredClaimNames.Sub, user.Id));
+            claims.Add(new Claim(JwtRegisteredClaimNames.Email, user.Email));
+            claims.Add(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
+            claims.Add(new Claim(JwtRegisteredClaimNames.Nbf, ToUnixEpochDate(DateTime.UtcNow).ToString()));
+            claims.Add(new Claim(JwtRegisteredClaimNames.Iat, ToUnixEpochDate(DateTime.UtcNow).ToString(), ClaimValueTypes.Integer64));
+
+            AddRolesToUser(claims, user);
+        }
+
+        private async void AddRolesToUser(IList<Claim> claims, IdentityUser user)
+        {
+            var userRoles = await _userManager.GetRolesAsync(user);
+
+            foreach (var userRole in userRoles)
+            {
+                claims.Add(new Claim("role", userRole));
+            }
+        }
+
+        private static long ToUnixEpochDate(DateTime date) =>
+            (long)Math.Round((date.ToUniversalTime() - new DateTimeOffset(1970, 1, 1, 0, 0, 0, TimeSpan.Zero)).TotalSeconds);
+
+        private ClaimsIdentity CreateIdentityClaims(IList<Claim> claims)
+        {
+            var identityClaims = new ClaimsIdentity();
+            identityClaims.AddClaims(claims);
+
+            return identityClaims;
+        }
+
+        private string CreateEncodedToken(AppSettings appSettings, ClaimsIdentity identityClaims)
+        {
+            var tokenHandlder = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(appSettings.Secret);
+
+            var token = tokenHandlder.CreateToken(new SecurityTokenDescriptor
+            {
+                Issuer = appSettings.Issuer,
+                Audience = appSettings.ValidIn,
+                Subject = identityClaims,
+                Expires = DateTime.UtcNow.AddHours(appSettings.ExpiresIn),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             });
 
-            var encodedToken = tokenHandler.WriteToken(token);
-            return encodedToken;
+            return tokenHandlder.WriteToken(token);
         }
     }
 }

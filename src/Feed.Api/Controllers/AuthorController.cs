@@ -1,13 +1,16 @@
 ﻿using AutoMapper;
 using Feed.Api.DTOs;
+using Feed.Api.Extensions;
 using Feed.Business.Interfaces;
 using Feed.Business.Interfaces.Repositories;
 using Feed.Business.Interfaces.Services;
 using Feed.Business.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Feed.Api.Controllers
 {
+    [Authorize]
     [Route("api/authors")]
     public class AuthorController : MainController
     {
@@ -25,6 +28,7 @@ namespace Feed.Api.Controllers
             _mapper = mapper;
         }
 
+        [ClaimsAuthorize("Author", "Teste")]
         [HttpGet("get-authors/")]
         public async Task<ActionResult<IEnumerable<AuthorDTO>>> GetAll()
         {
