@@ -20,6 +20,7 @@ public static class AppConfig
     {
         app.UseHttpsRedirection();
         app.UseRouting();
+        app.UseAuthentication();
         app.UseAuthorization();
 
         return app;
