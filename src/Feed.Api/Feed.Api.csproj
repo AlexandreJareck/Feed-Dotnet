@@ -21,10 +21,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Extensions\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Feed.Business\Feed.Business.csproj" />
     <ProjectReference Include="..\Feed.Data\Feed.Data.csproj" />
   </ItemGroup>
