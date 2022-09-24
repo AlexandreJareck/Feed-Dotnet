@@ -1,7 +1,12 @@
 ﻿using Feed.Api.DTOs.User;
+using Feed.Api.Extensions;
 using Feed.Business.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Text;
 
 namespace Feed.Api.Controllers
 {
@@ -10,14 +15,17 @@ namespace Feed.Api.Controllers
     {
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly UserManager<IdentityUser> _userManager;
+        private readonly AppSettings _appSettings;
 
         public AuthController(INotifier notifier,
+                              IOptions<AppSettings> appSettings,
                               SignInManager<IdentityUser> signInManager,
                               UserManager<IdentityUser> userManager
                               ) : base(notifier)
         {
             _signInManager = signInManager;
             _userManager = userManager;
+            _appSettings = appSettings.Value;
         }
 
         [HttpPost("new-account")]
@@ -37,7 +45,7 @@ namespace Feed.Api.Controllers
             if (result.Succeeded)
             {
                 await _signInManager.SignInAsync(user, false);
-                return CustomResponse(registerUser);
+                return CustomResponse(GenerateJwt());
             }
 
             foreach (var error in result.Errors)
@@ -57,7 +65,7 @@ namespace Feed.Api.Controllers
 
             if (result.Succeeded)
             {
-                return CustomResponse("Ok");
+                return CustomResponse(GenerateJwt());
             }
 
             if (result.IsLockedOut)
@@ -68,6 +76,24 @@ namespace Feed.Api.Controllers
 
             NotifyError("Usuário ou Senha incorretos");
             return CustomResponse(loginUser);
+        }
+
+
+        private string GenerateJwt()
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
+
+            var token = tokenHandler.CreateToken(new SecurityTokenDescriptor
+            {
+                Issuer = _appSettings.Issuer,
+                Audience = _appSettings.ValidIn,
+                Expires = DateTime.UtcNow.AddHours(_appSettings.ExpiresIn),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            });
+
+            var encodedToken = tokenHandler.WriteToken(token);
+            return encodedToken;
         }
     }
 }
