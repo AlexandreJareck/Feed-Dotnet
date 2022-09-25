@@ -39,9 +39,12 @@ namespace Feed.Api.Controllers
                 UserName = registerUser.Email,
                 Email = registerUser.Email,
                 EmailConfirmed = true
-            };
+            };            
 
             var result = await _userManager.CreateAsync(user, registerUser.Password);
+
+            //var claim = new Claim("Author", "Get");
+            //await _userManager.AddClaimAsync(user, claim); // add claims
 
             if (result.Succeeded)
             {

@@ -18,12 +18,6 @@ builder.Services.ResolveDependencies();
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
 app.UseApiConfig(app.Environment);
 
 app.MapControllers();
