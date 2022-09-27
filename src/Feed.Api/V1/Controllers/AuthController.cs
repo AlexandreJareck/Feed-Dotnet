@@ -23,8 +23,7 @@ namespace Feed.Api.V1.Controllers
         public AuthController(INotifier notifier,
                               IOptions<AppSettings> appSettings,
                               SignInManager<IdentityUser> signInManager,
-                              UserManager<IdentityUser> userManager
-                              ) : base(notifier)
+                              UserManager<IdentityUser> userManager) : base(notifier)
         {
             _signInManager = signInManager;
             _userManager = userManager;
@@ -83,7 +82,6 @@ namespace Feed.Api.V1.Controllers
             NotifyError("Usuário ou Senha incorretos");
             return CustomResponse(loginUser);
         }
-
 
         private async Task<LoginResponseDTO> GenerateJwt(string email)
         {
