@@ -28,8 +28,4 @@
     <ProjectReference Include="..\Feed.Data\Feed.Data.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="V1\" />
-  </ItemGroup>
-
 </Project>

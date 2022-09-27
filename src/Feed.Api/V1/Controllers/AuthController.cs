@@ -1,4 +1,5 @@
-﻿using Feed.Api.DTOs.User;
+﻿using Feed.Api.Controllers;
+using Feed.Api.DTOs.User;
 using Feed.Api.Extensions;
 using Feed.Business.Interfaces;
 using Microsoft.AspNetCore.Identity;
@@ -9,9 +10,10 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace Feed.Api.Controllers
+namespace Feed.Api.V1.Controllers
 {
-    [Route("api")]
+    [ApiVersion("1.0")]
+    [Route("api/v{version:apiVersion}")]
     public class AuthController : MainController
     {
         private readonly SignInManager<IdentityUser> _signInManager;
@@ -39,7 +41,7 @@ namespace Feed.Api.Controllers
                 UserName = registerUser.Email,
                 Email = registerUser.Email,
                 EmailConfirmed = true
-            };            
+            };
 
             var result = await _userManager.CreateAsync(user, registerUser.Password);
 

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Feed.Api.Controllers;
 using Feed.Api.DTOs;
 using Feed.Api.Extensions;
 using Feed.Business.Interfaces;
@@ -8,7 +9,7 @@ using Feed.Business.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Feed.Api.Controllers
+namespace Feed.Api.V1.Controllers
 {
     [Authorize]
     [Route("api/authors")]
@@ -59,7 +60,7 @@ namespace Feed.Api.Controllers
         [HttpPut("{id:guid}")]
         public async Task<ActionResult<AuthorDTO>> Update(Guid id, AuthorDTO authorDTO)
         {
-            if(id != authorDTO.Id)
+            if (id != authorDTO.Id)
             {
                 NotifyError("Id Inválido!");
                 return CustomResponse(authorDTO);
