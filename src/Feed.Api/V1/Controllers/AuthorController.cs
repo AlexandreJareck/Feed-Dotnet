@@ -34,15 +34,15 @@ namespace Feed.Api.V1.Controllers
         [HttpGet("get-authors/")]
         public async Task<ActionResult<IEnumerable<AuthorDTO>>> GetAll()
         {
-            var author = await _authorRepository.GetAll();
-            return Ok(author);
+            var authorDTO = _mapper.Map<AuthorDTO>(await _authorRepository.GetAll());
+            return Ok(authorDTO);
         }
 
         [HttpGet("{id:guid}")]
         public async Task<ActionResult<AuthorDTO>> Get(Guid id)
         {
-            var author = await _authorRepository.GetById(id);
-            return Ok(author);
+            var authorDTO = _mapper.Map<AuthorDTO>(await _authorRepository.GetById(id));
+            return Ok(authorDTO);
         }
 
         [HttpPost]
@@ -53,7 +53,8 @@ namespace Feed.Api.V1.Controllers
 
             var author = await _authorService.Add(_mapper.Map<Author>(authorDTO));
 
-            authorDTO.Id = author.Id;
+            if (author != null)
+                authorDTO.Id = author.Id;
 
             return CustomResponse(authorDTO);
         }
