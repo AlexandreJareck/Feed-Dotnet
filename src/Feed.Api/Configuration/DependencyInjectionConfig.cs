@@ -18,6 +18,8 @@ public static class DependencyInjectionConfig
 
         services.AddScoped<INotifier, Notifier>();
         services.AddScoped<IAuthorService, AuthorService>();
+        services.AddScoped<IContentService, ContentService>();
+        services.AddScoped<IPostService, PostService>();
 
         return services;
     }
