@@ -12,7 +12,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace Feed.Api.V1.Controllers
 {
     [Authorize]
-    [Route("api/authors")]
+    [ApiVersion("1.0")]
+    [Route("api/v{version:apiVersion}")]
     public class AuthorController : MainController
     {
         private readonly IAuthorRepository _authorRepository;
