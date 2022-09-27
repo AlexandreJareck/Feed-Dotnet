@@ -2,9 +2,9 @@
 
 namespace Feed.Business.Interfaces.Services;
 
-public interface IPostService
+public interface IPostService : IDisposable
 {
-    Task Add(Post post);
-    Task Update(Post post);
+    Task<Post?> Add(Post post);
+    Task <Post?> Update(Post post);
     Task Remove(Guid id);
 }
