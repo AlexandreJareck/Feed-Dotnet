@@ -38,6 +38,13 @@ public class AuthorController : MainController
         return Ok(authorDTO);
     }
 
+    [HttpGet("get-author-posts/")]
+    public async Task<ActionResult<AuthorDTO>> GetById(Guid id)
+    {
+        var authorDTO = _mapper.Map<AuthorDTO>(await _authorRepository.GetAuthorPosts(id));
+        return Ok(authorDTO);
+    }
+
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<AuthorDTO>> Get(Guid id)
     {
