@@ -16,7 +16,8 @@ public class AuthorRepository : Repository<Author>, IAuthorRepository
     {
         return await Db.Authors
             .AsNoTracking()
-            .Include(a => a.Posts)
+            .Include("Posts")   
+            .Include("Posts.Contents")
             .FirstOrDefaultAsync(a => a.Id == id)
             ?? new Author();
     }
