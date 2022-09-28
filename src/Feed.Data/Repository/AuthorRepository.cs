@@ -14,11 +14,12 @@ public class AuthorRepository : Repository<Author>, IAuthorRepository
 
     public async Task<Author> GetAuthorPosts(Guid id)
     {
-        return await Db.Authors
+        var result = await Db.Authors
             .AsNoTracking()
-            .Include("Posts")   
-            .Include("Posts.Contents")
+            .Include(a => a.Posts)!.ThenInclude(p => p.Contents)   
             .FirstOrDefaultAsync(a => a.Id == id)
             ?? new Author();
+
+        return result;
     }
 }
