@@ -30,11 +30,11 @@ public class AuthorController : MainController
         _mapper = mapper;
     }
 
-    [ClaimsAuthorize("Author", "Teste")]
+    //[ClaimsAuthorize("Author", "Teste")]
     [HttpGet("get-authors/")]
     public async Task<ActionResult<IEnumerable<AuthorDTO>>> GetAll()
     {
-        var authorDTO = _mapper.Map<AuthorDTO>(await _authorRepository.GetAll());
+        var authorDTO = _mapper.Map<IEnumerable<AuthorDTO>>(await _authorRepository.GetAll());
         return Ok(authorDTO);
     }
 
