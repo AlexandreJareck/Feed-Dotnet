@@ -9,8 +9,12 @@ namespace Feed.Api.Configuration
         public AutoMapperConfig()
         {
             CreateMap<Author, AuthorDTO>().ReverseMap();
-            CreateMap<Post, PostDTO>().ReverseMap();
             CreateMap<Content, ContentDTO>().ReverseMap();
+            CreateMap<Post, PostDTO>().ReverseMap();
+
+            //CreateMap<Post, PostDTO>()
+            //    .ForMember(dest => dest.AuthorId, opt => opt.MapFrom(src => src.Author.Id));
+
         }
     }
 }
