@@ -19,15 +19,18 @@ public class AuthorController : MainController
     private readonly IAuthorRepository _authorRepository;
     private readonly IAuthorService _authorService;
     private readonly IMapper _mapper;
+    private readonly ILogger _logger;
 
     public AuthorController(IAuthorRepository authorRepository,
                             IAuthorService authorService,
                             IMapper mapper,
-                            INotifier notifier) : base(notifier)
+                            INotifier notifier,
+                            ILogger logger) : base(notifier)
     {
         _authorRepository = authorRepository;
         _authorService = authorService;
         _mapper = mapper;
+        _logger = logger;
     }
 
     //[ClaimsAuthorize("Author", "Teste")]
@@ -48,8 +51,16 @@ public class AuthorController : MainController
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<AuthorDTO>> Get(Guid id)
     {
-        var authorDTO = _mapper.Map<AuthorDTO>(await _authorRepository.GetById(id));
-        return Ok(authorDTO);
+        try
+        {
+            var authorDTO = _mapper.Map<AuthorDTO>(await _authorRepository.GetById(id));
+            return Ok(authorDTO);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogInformation(ex, "Oooops ocorreu um erro!");
+            throw;
+        }
     }
 
     [HttpPost]
