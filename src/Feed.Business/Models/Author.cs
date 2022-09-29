@@ -35,7 +35,7 @@ public class AuthorValidation : AbstractValidator<Author>
         RuleFor(f => f.AvatarUrl)
             .NotEmpty()
             .WithMessage(RequiredErrorMsg)
-            .Length(10, 100)
+            .Length(10, 255)
             .WithMessage(MaxMinErrorMsg);
 
         RuleFor(f => f.Role)
